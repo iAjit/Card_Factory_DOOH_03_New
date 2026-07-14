@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJl01fe399c36b5f633b65c653b1b272139"/>
+<html><head><meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJld09402aff3ee802d555fc2a3fc57c2af"/>
   <meta charset="utf-8">
   <meta name="generator" content="Google Web Designer 16.4.1.0219">
   <meta name="template" content="Banner 3.0.0">
@@ -178,6 +178,7 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
         let calculationsComplete = false;
         let videoLoaded = false;
         let vioohReadySent = false;
+        let isFallbackMode = false;
 
         console.log("DOM Loaded. Accessing the video element directly...");
 
@@ -257,7 +258,7 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
           if (vioohReadySent) return;
 
           // SCENARIO A: Fallback mode (No asset ID or store found)
-          var isFallbackMode = (fallbackImage.style.opacity === "1" || fallbackImage.style.opacity === 1);
+          //var isFallbackMode = (fallbackImage.style.opacity === "1" || fallbackImage.style.opacity === 1);
 
           if (isFallbackMode) {
             if (calculationsComplete) {
@@ -370,6 +371,7 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
               // 2. Keep this FALSE so the standard video path doesn't get tricked.
               // Scenario A in checkVioohReady() will handle this automatically now.
               videoLoaded = false; 
+              isFallbackMode = true;
             }
 
             // ==============================
