@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJl10671effa90f9b2c396ee29198787936"/>
+<html><head><meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJlae6ca4ad0046a1a31b8235bac73fced4"/>
   <meta charset="utf-8">
   <meta name="generator" content="Google Web Designer 16.4.1.0219">
   <meta name="template" content="Banner 3.0.0">
@@ -178,90 +178,103 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
         let calculationsComplete = false;
         let videoLoaded = false;
         let vioohReadySent = false;
-        
- console.log("DOM Loaded. Accessing the video element directly...");
 
-  // 1. Using your updated ID: Video003
-  var gwdVideoComponent = document.getElementById("Video003");
+        console.log("DOM Loaded. Accessing the video element directly...");
 
-  if (gwdVideoComponent) {
-    // Extract the inner browser player tag
-    var videoElement = gwdVideoComponent.querySelector("video") || gwdVideoComponent;
-    
-    if (videoElement) {
-      console.log("Success! Secure scope established. Attaching listeners...");
-      
-      var runProgressCalculation = function() {
-        if (videoElement.buffered.length > 0) {
-          var bufferedEnd = videoElement.buffered.end(videoElement.buffered.length - 1);
-          var percentLoaded = (bufferedEnd / videoElement.duration) * 100;
+        // 1. Using your updated ID: Video003
+        var gwdVideoComponent = document.getElementById("Video003");
 
-          console.log("Progress calculation: " + percentLoaded.toFixed(1) + "%");
-          
-          if (percentLoaded >= 100) {
-            console.log("Success! Video is 100% loaded.");
-            
-            // Unbind listeners cleanly
-            videoElement.removeEventListener("progress", runProgressCalculation);
-            videoElement.removeEventListener("canplaythrough", runProgressCalculation);
-            videoElement.removeEventListener("loadeddata", runProgressCalculation);
-            videoElement.removeEventListener("loadedmetadata", runProgressCalculation);
-            
-            // Run your DOOH / Viooh pipeline flags
-            videoLoaded = true;
-            if (typeof checkVioohReady === "function") checkVioohReady();
+        if (gwdVideoComponent) {
+          // Extract the inner browser player tag
+          var videoElement = gwdVideoComponent.querySelector("video") || gwdVideoComponent;
+
+          if (videoElement) {
+            console.log("Success! Secure scope established. Attaching listeners...");
+
+            var runProgressCalculation = function() {
+              if (videoElement.buffered.length > 0) {
+                var bufferedEnd = videoElement.buffered.end(videoElement.buffered.length - 1);
+                var percentLoaded = (bufferedEnd / videoElement.duration) * 100;
+
+                console.log("Progress calculation: " + percentLoaded.toFixed(1) + "%");
+
+                if (percentLoaded >= 100) {
+                  console.log("Success! Video is 100% loaded.");
+
+                  // Unbind listeners cleanly
+                  videoElement.removeEventListener("progress", runProgressCalculation);
+                  videoElement.removeEventListener("canplaythrough", runProgressCalculation);
+                  videoElement.removeEventListener("loadeddata", runProgressCalculation);
+                  videoElement.removeEventListener("loadedmetadata", runProgressCalculation);
+
+                  // Run your DOOH / Viooh pipeline flags
+                  videoLoaded = true;
+                  if (typeof checkVioohReady === "function") checkVioohReady();
+                }
+              }
+            };
+
+            // Configure media stream download settings aggressively
+            videoElement.preload = "auto";
+
+            // 2. Attach standard network download tracking listeners
+            videoElement.addEventListener("progress", runProgressCalculation);
+            videoElement.addEventListener("canplaythrough", runProgressCalculation);
+            videoElement.addEventListener("loadeddata", runProgressCalculation);
+            videoElement.addEventListener("loadedmetadata", runProgressCalculation);
+
+            // 3. Handle immediate local browser cache scenarios
+            if (videoElement.readyState >= 1) {
+              console.log("Metadata ready from local layout cache.");
+              runProgressCalculation();
+            } else {
+              console.log("Waiting for video stream pipeline initialization...");
+
+              // --- THE DEFINITIVE PIPELINE WAKE UP TRICK ---
+              // For video assets inside GWD containers, we must manually read the source string
+              // to force the browser engine to start downloading immediately.
+              var videoSrc = videoElement.src || gwdVideoComponent.getAttribute("sources") || gwdVideoComponent.getAttribute("src");
+
+              if (videoSrc && (!videoElement.src || videoElement.src === "")) {
+                videoElement.src = videoSrc;
+              }
+
+              // Force a physical file reload stream right now
+              videoElement.load();
+
+              // Run an initial manual calculation pass in case .load() forces an instant cache hit
+              runProgressCalculation();
+            }
+
+          } else {
+            console.error("Found component, but could not target the inner video element layer.");
           }
-        }
-      };
-
-      // Configure media stream download settings aggressively
-      videoElement.preload = "auto";
-
-      // 2. Attach standard network download tracking listeners
-      videoElement.addEventListener("progress", runProgressCalculation);
-      videoElement.addEventListener("canplaythrough", runProgressCalculation);
-      videoElement.addEventListener("loadeddata", runProgressCalculation);
-      videoElement.addEventListener("loadedmetadata", runProgressCalculation);
-
-      // 3. Handle immediate local browser cache scenarios
-      if (videoElement.readyState >= 1) {
-        console.log("Metadata ready from local layout cache.");
-        runProgressCalculation(); 
-      } else {
-        console.log("Waiting for video stream pipeline initialization...");
-        
-        // --- THE DEFINITIVE PIPELINE WAKE UP TRICK ---
-        // For video assets inside GWD containers, we must manually read the source string
-        // to force the browser engine to start downloading immediately.
-        var videoSrc = videoElement.src || gwdVideoComponent.getAttribute("sources") || gwdVideoComponent.getAttribute("src");
-        
-        if (videoSrc && (!videoElement.src || videoElement.src === "")) {
-          videoElement.src = videoSrc;
+        } else {
+          console.error("Could not find element ID 'Video003' outside the function.");
         }
 
-        // Force a physical file reload stream right now
-        videoElement.load(); 
-        
-        // Run an initial manual calculation pass in case .load() forces an instant cache hit
-        runProgressCalculation();
-      }
-
-    } else {
-      console.error("Found component, but could not target the inner video element layer.");
-    }
-  } else {
-    console.error("Could not find element ID 'Video003' outside the function.");
-  }
-        
         function checkVioohReady() {
           if (vioohReadySent) return;
-          if (calculationsComplete && videoLoaded) {
-            vioohReadySent = true;
-            console.log("Both calculations and video are ready.");
-            window.parent.postMessage({
-              event: "viooh.ready"
-            }, "*");
-            console.log("viooh.ready Event Triggered");
+
+          // SCENARIO A: Fallback mode (No asset ID or store found)
+          var isFallbackMode = (fallbackImage.style.opacity === "1" || fallbackImage.style.opacity === 1);
+
+          if (isFallbackMode) {
+            if (calculationsComplete) {
+              vioohReadySent = true;
+              console.log("Fallback Mode: Calculations complete. Sending ready signal immediately.");
+              window.parent.postMessage({ event: "viooh.ready" }, "*");
+              //triggerPlay(); 
+            }
+          } 
+          // SCENARIO B: Standard Video mode (Asset ID found, MUST wait for video download)
+          else {
+            if (calculationsComplete && videoLoaded) {
+              vioohReadySent = true;
+              console.log("Standard Mode: Both calculations and video download are 100% ready.");
+              window.parent.postMessage({ event: "viooh.ready" }, "*");
+              //triggerPlay(); 
+            }
           }
         }
 
@@ -325,7 +338,7 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
                 };
               }
             }
-            //   console.log(nearestStore);
+            //console.log(nearestStore);
             if (nearestStore) {
               console.log('Nearest Store:', nearestStore.name);
               console.log('Distance:', minDistance.toFixed(2), 'km');
@@ -334,30 +347,34 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
               console.log('Walking Time: ', walkingTime.toFixed(2), ' minutes');
               const containerStoreName = document.getElementById('nearstoreName');
               containerStoreName.innerHTML = `${nearestStore.name}`;
-              //              containerStoreName.innerHTML = `Stockport Merseyway  Shopping Centre`;
+              //containerStoreName.innerHTML = `Stockport Merseyway  Shopping Centre`;
 
               containerStoreName.style.fontFamily = 'OpenSans-Regular';
               //Stockport Merseyway  Shopping Centre
             }
           } else {
-            console.log('Nearest Store/Frame ID: Not found');
-            const containerStoreName = document.getElementById('nearstoreName');
-            containerStoreName.innerHTML = ` `;
-            fallbackImage.style.opacity = 1;
-            console.log(videoElement);
-            videoElement.pause();
-            videoLoaded=true;
+              console.log('vioohAssetId Not found. Activating fallback Image layout. Disabling the Video Mode');
+              const containerStoreName = document.getElementById('nearstoreName');
+              containerStoreName.innerHTML = ` `;
+
+              // 1. Show fallback image and pause the hidden video player
+              fallbackImage.style.opacity = 1;
+              if (videoElement && typeof videoElement.pause === "function") {
+                videoElement.pause();
+              }
+
+              // 2. Keep this FALSE so the standard video path doesn't get tricked.
+              // Scenario A in checkVioohReady() will handle this automatically now.
+              videoLoaded = false; 
+            }
+
+            // ==============================
+            // Calculations Finished
+            // ==============================
+            calculationsComplete = true;
+            console.log("Dynamic calculations completed.");
+            checkVioohReady();
           }
-          // ==============================
-          // NEW : Calculations Finished
-          // ==============================
-
-          calculationsComplete = true;
-
-          console.log("Dynamic calculations completed.");
-
-          checkVioohReady();
-        }
 
         function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
           var R = 6371;
@@ -403,7 +420,7 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
        */
       function handleWebComponentsReady(event) {
 
-        
+
         // Start the Ad lifecycle.
         requestAnimationFrame(function() {
           setTimeout(function() {
