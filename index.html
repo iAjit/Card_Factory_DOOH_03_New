@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJlae6ca4ad0046a1a31b8235bac73fced4"/>
+<html><head><meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJl01fe399c36b5f633b65c653b1b272139"/>
   <meta charset="utf-8">
   <meta name="generator" content="Google Web Designer 16.4.1.0219">
   <meta name="template" content="Banner 3.0.0">
@@ -263,6 +263,10 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
             if (calculationsComplete) {
               vioohReadySent = true;
               console.log("Fallback Mode: Calculations complete. Sending ready signal immediately.");
+              videoElement.removeEventListener("progress", runProgressCalculation);
+              videoElement.removeEventListener("canplaythrough", runProgressCalculation);
+              videoElement.removeEventListener("loadeddata", runProgressCalculation);
+              videoElement.removeEventListener("loadedmetadata", runProgressCalculation);
               window.parent.postMessage({ event: "viooh.ready" }, "*");
               //triggerPlay(); 
             }
