@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJld09402aff3ee802d555fc2a3fc57c2af"/>
+<html><head><meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJl64cb36e8f891773ae69256a90184d28f"/>
   <meta charset="utf-8">
   <meta name="generator" content="Google Web Designer 16.4.1.0219">
   <meta name="template" content="Banner 3.0.0">
@@ -156,7 +156,7 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
     <gwd-pagedeck class="gwd-page-container" id="pagedeck">
       <gwd-page id="page1" class="gwd-page-wrapper gwd-page-size gwd-lightbox gwd-page-1o4m" data-gwd-width="100%" data-gwd-height="100%">
         <div class="gwd-page-content gwd-page-size gwd-div-efpt">
-          <gwd-video id="Video003" muted="" sources="Card_Factory-0003.mp4" class="gwd-video-teuo" autoplay=""></gwd-video><span class="gwd-span-zjs6" id="nearstoreName"><br></span>
+          <gwd-video id="CardFactory-0003" muted="" sources="Card_Factory-0003_1.mp4" class="gwd-video-teuo" autoplay=""></gwd-video><span class="gwd-span-zjs6" id="nearstoreName"><br></span>
           <gwd-image id="fallback" source="03.png" scaling="stretch" class="gwd-image-pfbl"></gwd-image>
         </div>
       </gwd-page>
@@ -183,7 +183,7 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
         console.log("DOM Loaded. Accessing the video element directly...");
 
         // 1. Using your updated ID: Video003
-        var gwdVideoComponent = document.getElementById("Video003");
+        var gwdVideoComponent = document.getElementById("CardFactory-0003");
 
         if (gwdVideoComponent) {
           // Extract the inner browser player tag
@@ -268,16 +268,20 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
               videoElement.removeEventListener("canplaythrough", runProgressCalculation);
               videoElement.removeEventListener("loadeddata", runProgressCalculation);
               videoElement.removeEventListener("loadedmetadata", runProgressCalculation);
-              window.parent.postMessage({ event: "viooh.ready" }, "*");
+              window.parent.postMessage({
+                event: "viooh.ready"
+              }, "*");
               //triggerPlay(); 
             }
-          } 
+          }
           // SCENARIO B: Standard Video mode (Asset ID found, MUST wait for video download)
           else {
             if (calculationsComplete && videoLoaded) {
               vioohReadySent = true;
               console.log("Standard Mode: Both calculations and video download are 100% ready.");
-              window.parent.postMessage({ event: "viooh.ready" }, "*");
+              window.parent.postMessage({
+                event: "viooh.ready"
+              }, "*");
               //triggerPlay(); 
             }
           }
@@ -358,29 +362,29 @@ a)}},videoWidth:{configurable:!0,enumerable:!0,get:function(){return this.g.vide
               //Stockport Merseyway  Shopping Centre
             }
           } else {
-              console.log('vioohAssetId Not found. Activating fallback Image layout. Disabling the Video Mode');
-              const containerStoreName = document.getElementById('nearstoreName');
-              containerStoreName.innerHTML = ` `;
+            console.log('vioohAssetId Not found. Activating fallback Image layout. Disabling the Video Mode');
+            const containerStoreName = document.getElementById('nearstoreName');
+            containerStoreName.innerHTML = ` `;
 
-              // 1. Show fallback image and pause the hidden video player
-              fallbackImage.style.opacity = 1;
-              if (videoElement && typeof videoElement.pause === "function") {
-                videoElement.pause();
-              }
-
-              // 2. Keep this FALSE so the standard video path doesn't get tricked.
-              // Scenario A in checkVioohReady() will handle this automatically now.
-              videoLoaded = false; 
-              isFallbackMode = true;
+            // 1. Show fallback image and pause the hidden video player
+            fallbackImage.style.opacity = 1;
+            if (videoElement && typeof videoElement.pause === "function") {
+              videoElement.pause();
             }
 
-            // ==============================
-            // Calculations Finished
-            // ==============================
-            calculationsComplete = true;
-            console.log("Dynamic calculations completed.");
-            checkVioohReady();
+            // 2. Keep this FALSE so the standard video path doesn't get tricked.
+            // Scenario A in checkVioohReady() will handle this automatically now.
+            videoLoaded = false;
+            isFallbackMode = true;
           }
+
+          // ==============================
+          // Calculations Finished
+          // ==============================
+          calculationsComplete = true;
+          console.log("Dynamic calculations completed.");
+          checkVioohReady();
+        }
 
         function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
           var R = 6371;
